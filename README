@@ -1,0 +1,115 @@
+Projet en technique de développement sur le jeu de la vie codé en C.
+
+
+NIVEAU 1:
+
+Notre objectif était de créer deux fonctions, alloue_grille et initialiser_grille et de changer de grille en utilisant la touche n de notre clavier. 
+
+
+Les fonctions alloue_grille et initialiser_grille se trouvent dans le programme grille.c
+Le changement de grille se trouve dans io.c
+Pour compiler le programme et voir si aucune erreur se présente, nous devons simplement entrer dans le terminal make main , afin d'exécuter notre makefile.
+Ensuite, pour tester une grille du jeu, le chemin à suivre est :
+	./main grilles/grille[p].txt
+
+Avec:	
+	grilles: le dossier qui contient toute les grilles
+	[p]: numéro de la grille qu'on souhaite essayer
+
+	
+
+Il est préférable de stocker le dossier grilles dans le dossier courant du projet.
+
+Si vous voulez tester sur une autre grille, entrer n et saisissez seulement le chemin de la grille: grilles/grille[p].txt
+
+Lors de quitter le tester, entrez simplement q, et vous quitterez le jeu. 
+
+
+NIVEAU 2:
+
+On attend de nous de programmer une modification de l'affichage:
+
+	- afficher le temps d'évolution:
+Pour cela, j'ai décidé de créer une variable temps_evol qui incrémente à chaque entrée au clavier
+
+
+	- mettre en mode cyclique / non cyclique:
+Un pointeur de fonction int (*compte_voisin_vivant)(int, int ,grille), nous a été conseillé pour afficher le changement à l'écran. J'ai crée pour cela une fonction compte_voison_non_cyclique qui compte le nombre de voisin que peut avoir une cellule quand le mode "non cyclique est activé". De plus, j'ai initialisé une variable cyclique pour ensuite selon son état 1(cyclique activé) ou 0 (cyclique activé), le pointeur de fonction pointe sur la fonction compte_voisin_vivant_cyclique ou compte_voisin_vivant_non_cyclique. 
+Ce mode se met via l'entrée de la touche 'c' du clavier. 
+
+
+	- activer/désactiver le vieillissement 
+S'active via la touche 'v' du clavier. Elle donne l'âge d'une cellule morte. "L’âge d’une cellule est le nombre de pas de temps consécutifs durant lesquels la cellule est vivante. Une cellule meurt de vieillesse quand son âge dépasse 8 pas de temps." (Rep présentation sur moodle)
+Pour cela j'ai créer 2 fonctions: vieillissement_cellules et vieillissement_cellules_condition_morte,
+J'ai aussi utilisé un pointeur de fonction, je me suis inspirée du cyclique. Une variable vieillissement m'a aussi été utile pour définir l'état (si activé ou non). 
+
+
+
+NIVEAU 3:
+
+Pour le niveau 3, il s'agissait de regrouper les fichiers .h dans un dossier include, les .o dans un dossier obj, les .c dans un dossier src et pour finir l'exécutable main dans un dossier bin. Pour réaliser cette action, j'ai donc modifié le makefile en ajoutant les commandes de création dossier obj et bin et des commandes qui permettent de déplacer les fichiers vers les dossier. J'ai aussi modifié le clean, pour qu'il puisse effacer les dossiers obj et le bin et lors d'une nouvelle compilation de les re créer.
+Le chemin pour exécuter le programme a changé, il faut donc : 
+	bin/main grilles/grille[p].txt
+
+La deuxième chose à faire était de marquer les cellules qui ne sont plus déclarées comme vivante par un X, elles ont pour valeur -1. 
+Pour cela, j'ai créé une fonction set_non_viable dans le fichier grille.h qui récupère les cellules égale à -1. 
+Je modifie la fonction affiche_grille(io.c) pour afficher un X quand une cellule est égale à -1.
+J'ai notamment modifié la valeur de est_vivante, pour que le vieillissement de la fonction reste cohérent. 
+
+
+
+
+NIVEAU 4:
+
+Pour le niveau 4, une interface graphique doit être faite, pour cela un main_cairo et un mode_cairo a été crée pour pouvoir faire l'affichage de la grille en interface graphique.
+Le makefile a aussi été changé. 
+Pour la compilation du main_cairo, il faut sur le terminal exécuter la commande:
+	make 
+	bin/main_cairo grilles/grille[p].txt
+
+Si une interface graphique n'est pas installé sur votre machine, vous pouvez exécuter le main simple. Il faut donc exécuter:
+	make MODE="TEXTE"
+	bin/main grilles/grille[p].txt
+
+Pour utiliser correctement le mode graphique, voici les instructions:
+	- Faire évoluer la grille: 
+Faire un clique droit à chaque fois qu'on veut avancer la grille
+
+	- Quitter la grille: 
+Faire un clique gauche
+
+	- Activer/ Désactiver le vieillissement: 
+Sur l'interface graphique vous tapez sur la touche "v" .Lorsque le vieillissement est activé, se sont les couleurs des cases qui s'intensifient du orange claire vers le rouge lorsque la cellule est morte au bout de 8 pas de temps la cellule disparait .
+
+	-Activer/ Désactiver le mode cyclique: 
+Sur interface graphique tapez la touche "c".
+
+	-Changer de grille:  
+Sur interface graphique tapez la touche "n" et la phrase "Donnez une nouvelle grille" s'affiche sur le terminal. Entrez le chemin d'une nouvelle grille et faite entrez.La nouvelle grille sera affiché.
+
+
+
+NIVEAU 5:
+
+Le niveau 5 a pour but de créer une librairie Avec les .o. Cette librairie lib doit se générer à l'aide du makefile et peut être supprime avec le make clean. 
+Pour cela, j'ai modifié le makefile. 
+ En faisant make et/ou make MODE="TEXTE" la lib se génère seule. 
+
+L'oscillation devait aussi être calculée pour ce niveau. Pour cela, j'ai crée 3 fonctions dans grille.c: 
+
+	- int test_grille_oscillation(grille g, grille gc);
+Teste si deux grilles sont égales
+	-int oscillation(grille g);
+Teste si la grille est oscillante selon les conditions
+	-int grille_vide(grille g);
+Teste si la grille est vide ou non
+
+Pour l'oscillation en mode graphique, j'ai crée une fonction:
+	-void grille_cairo_oscillante(grille g, cairo_surface_t *surface)
+Qui lorsque la touche 'o' est déclanché, la période apparait.
+
+Pour voir si la grille est oscillante il faut simplement:
+	- Pour le mode cairo appuyer sur la touche 'o' puis entrer et la période apparaitra
+	- Quand la période est à 0, la grille n'est pas oscillante
+
+	-Pour le mode TEXTE, il suffit aussi d'appuyer sur la touche 'o' et entrer. Si la grille oscille, la période sera donnée, sinon le message "la grille n'oscille pas" sera affiché.
